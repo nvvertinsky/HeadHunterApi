@@ -41,13 +41,12 @@ public class VacancyService {
     public void saveVacancy() {
         final Snap snap = snapDAO.save(new Snap(new Date()));
 
-        List<VacancyDTO> listVacancyDTO = this.restTemplate.getForObject(getVacanciesURL(), VacanciesDTO.class)
+        List<Vacancy> listVacancy = restTemplate.getForObject(getVacanciesURL(), VacanciesDTO.class)
                 .items()
                 .stream()
-                .map(item -> this.restTemplate.getForObject(String.format("https://api.hh.ru/vacancies/%s", item.id()), VacancyDTO.class))
-                .collect(Collectors.toList());
-
-        List<Vacancy> listVacancy = listVacancyDTO.stream().map(item -> new Vacancy(item.id(), item.name(), item.description(), snap)).toList();
+                .map(item -> restTemplate.getForObject(String.format("https://api.hh.ru/vacancies/%s", item.id()), VacancyDTO.class))
+                .map(item -> new Vacancy(item.id(), item.name(), item.description(), snap))
+                .toList();
 
         vacancyDAO.saveAll(listVacancy);
     }

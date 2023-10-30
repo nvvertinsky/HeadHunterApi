@@ -12,6 +12,7 @@ public class Snap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+    @Column(nullable = false)
     private Date dt;
 
     public Snap() {

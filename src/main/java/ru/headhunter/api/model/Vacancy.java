@@ -9,9 +9,11 @@ public class Vacancy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vacancyb_id")
     private Long id;
-    @Column(name = "hh_vacancy_id")
+    @Column(name = "hh_vacancy_id", nullable = false)
     private Long hhId;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne()
