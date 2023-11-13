@@ -1,29 +1,28 @@
 package ru.headhunter.api.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.headhunter.api.model.Snap;
-import ru.headhunter.api.model.VacanciesDTO;
+import ru.headhunter.api.dto.VacanciesDTO;
 import ru.headhunter.api.model.Vacancy;
-import ru.headhunter.api.model.VacancyDTO;
+import ru.headhunter.api.dto.VacancyDTO;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class VacancyService {
 
-    private final VacancyDAO vacancyDAO;
-    private final SnapDAO snapDAO;
-    private final RestTemplate restTemplate;
+    @Autowired
+    private VacancyDAO vacancyDAO;
 
-    public VacancyService(VacancyDAO vacancyDAO, SnapDAO snapDAO, RestTemplate restTemplate) {
-        this.vacancyDAO = vacancyDAO;
-        this.snapDAO = snapDAO;
-        this.restTemplate = restTemplate;
-    }
+    @Autowired
+    private SnapDAO snapDAO;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     private String getVacanciesURL() {
         return new StringBuilder("https://api.hh.ru/vacancies")
@@ -40,7 +39,7 @@ public class VacancyService {
     @Transactional
     public void saveVacancy() {
         final Snap snap = snapDAO.save(new Snap(new Date()));
-
+        err();
         List<Vacancy> listVacancy = restTemplate.getForObject(getVacanciesURL(), VacanciesDTO.class)
                 .items()
                 .stream()
@@ -49,6 +48,10 @@ public class VacancyService {
                 .toList();
 
         vacancyDAO.saveAll(listVacancy);
+    }
+
+    private void err() {
+        throw new RuntimeException("Все плохо");
     }
 
 }

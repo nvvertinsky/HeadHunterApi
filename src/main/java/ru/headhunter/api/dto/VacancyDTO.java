@@ -1,4 +1,4 @@
-package ru.headhunter.api.model;
+package ru.headhunter.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
