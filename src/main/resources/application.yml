@@ -4,3 +4,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
+hh:
+  vacancies:
+    url: https://api.hh.ru/vacancies?search_field=name&area=1&text=Oracle&enable_snippets=false&page=1&per_page=2
+  vacancy:
+    url: https://api.hh.ru/vacancies

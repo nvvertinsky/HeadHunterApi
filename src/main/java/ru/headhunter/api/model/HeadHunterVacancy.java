@@ -1,10 +1,13 @@
 package ru.headhunter.api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "vacancyb")
-public class Vacancy {
+public class HeadHunterVacancy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vacancyb_id")
@@ -13,25 +16,24 @@ public class Vacancy {
     @Column(name = "hh_vacancy_id", nullable = false)
     private Long hhId;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
+    @NotBlank(message = "Название вакансии не должно быть пустым")
+    @Size(max = 240)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne()
     @JoinColumn(name = "snapb_id")
     private Snap snap;
 
-    public Vacancy() {
+    public HeadHunterVacancy() {}
 
-    }
-
-    public Vacancy(Long hhId, String name, String description, Snap snap) {
+    public HeadHunterVacancy(Long hhId, String name, String description) {
         this.hhId = hhId;
         this.name = name;
         this.description = description;
-        this.snap = snap;
     }
 
 

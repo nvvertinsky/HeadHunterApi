@@ -1,18 +1,18 @@
 package ru.headhunter.api.model;
 
 
-public class ErrorResponse extends RuntimeException {
-    private String msg;
+public class ErrorResponse {
+    private String errMsg;
 
-    public ErrorResponse(String msg) {
-        this.msg = msg;
+    public ErrorResponse(String errMsg) {
+        this.errMsg = errMsg;
     }
 
     public String getMsg() {
-        return msg;
+        return errMsg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setMsg(String errMsg) {
+        this.errMsg = errMsg;
     }
 }

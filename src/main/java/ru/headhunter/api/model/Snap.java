@@ -1,6 +1,7 @@
 package ru.headhunter.api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -8,15 +9,17 @@ import java.util.Date;
 @Table(name = "snapb")
 public class Snap {
 
+    @Id
     @Column(name = "snapb_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
     private Long id;
-    @Column(nullable = false)
+
+    @Column(name = "dt",nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
     private Date dt;
 
-    public Snap() {
-    }
+    public Snap() {}
 
     public Snap(Date dt) {
         this.dt = dt;
