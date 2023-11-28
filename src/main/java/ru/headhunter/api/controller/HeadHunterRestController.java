@@ -1,13 +1,12 @@
 package ru.headhunter.api.controller;
 
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ru.headhunter.api.dto.VacanciesDTO;
 import ru.headhunter.api.dto.VacancyDTO;
@@ -19,10 +18,13 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("headhunter")
 public class HeadHunterRestController {
 
     @Autowired
     private HeadHunterVacancyService headHunterVacancyService;
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private RestTemplate restTemplate;
     @Value("${hh.vacancies.url}")
@@ -34,15 +36,28 @@ public class HeadHunterRestController {
     public ResponseEntity<HttpStatus> load(){
         VacanciesDTO vacanciesDTO = restTemplate.getForObject(vacanciesURL, VacanciesDTO.class);
 
-        List<HeadHunterVacancy> listHeadHunterVacancy = vacanciesDTO.items()
+        List<HeadHunterVacancy> listHeadHunterVacancy = vacanciesDTO.getItems()
                 .stream()
-                .map(item -> restTemplate.getForObject(String.format(vacancyURL + "/%s", item.id()), VacancyDTO.class))
-                .map(item -> new HeadHunterVacancy(item.id(), item.name(), item.description()))
+                .map(item -> restTemplate.getForObject(String.format(vacancyURL + "/%s", item.getId()), VacancyDTO.class))
+                .map(item -> convertToHeadHunterVacancy(item))
                 .toList();
 
 
         headHunterVacancyService.saveVacancy(listHeadHunterVacancy);
         return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+    }
+
+    @GetMapping("/vacancy/{id}")
+    public VacancyDTO getVacancy(@PathVariable("id") Long id) {
+        return convertToVacancyDTO(headHunterVacancyService.getVacancy(id));
+    }
+
+    private HeadHunterVacancy convertToHeadHunterVacancy(VacancyDTO vacancyDTO) {
+        return modelMapper.map(vacancyDTO, HeadHunterVacancy.class);
+    }
+
+    private VacancyDTO convertToVacancyDTO(HeadHunterVacancy vacancy) {
+        return modelMapper.map(vacancy, VacancyDTO.class);
     }
 
     @ExceptionHandler
